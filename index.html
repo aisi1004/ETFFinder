@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2f4f6">
+<title>ETF 검색기 – 미국·국내 ETF 한눈에</title>
+
+<script>try{if(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform())document.documentElement.classList.add('native')}catch(e){}</script>
+<style>
+.cw{position:relative}
+.cw .cf{position:absolute;top:4px;bottom:8px;width:52px;display:none;align-items:center;z-index:3;pointer-events:none}
+.cw .cf.on{display:flex}
+.cw .cf.r{right:0;justify-content:flex-end;background:linear-gradient(to right,transparent,var(--bg) 62%)}
+.cw .cf.l{left:0;justify-content:flex-start;background:linear-gradient(to left,transparent,var(--bg) 62%)}
+.cw .cf i{pointer-events:auto;cursor:pointer;font-style:normal;width:28px;height:28px;margin:0 8px;border-radius:50%;background:var(--card);color:var(--ink2);box-shadow:0 1px 5px #0003;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1}
+@media(min-width:960px){.cw .cf.r{right:24px}.cw .cf.l{left:24px}}
+.fav{border:0;background:none;color:#c3c9d1;font-size:23px;line-height:1;padding:6px 2px 6px 6px;cursor:pointer;flex:none}.fav.on{color:#f5b301}.fav:active{transform:scale(1.15)}.pt .fav{padding:0 6px 0 0;font-size:19px;vertical-align:-2px}
+.alp-wrap{background:var(--card);border-radius:20px;margin:12px 16px;padding:16px 18px}.alp-wrap.in{background:none;margin:0;padding:6px 0}
+.alp .sub2{font-size:12px;color:var(--sub);margin-top:2px;line-height:1.5}.alh{display:flex;align-items:center;gap:12px}.alh>div{flex:1;min-width:0}.alh b{font-size:15px}
+.alopt{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.all{font-size:12px;color:var(--sub);margin:8px 0 6px}.alchips{display:flex;flex-wrap:wrap;gap:8px}
+.alchips .chip{padding:0 12px;font-size:13px;height:34px;display:inline-flex;align-items:center;justify-content:center;line-height:1;white-space:nowrap}.alchips .thin input{width:44px;border:0;background:none;color:inherit;font:inherit;text-align:center;padding:0;margin:0 1px;outline:0}.alchips .tm{gap:2px}.tpick{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.alchips .tm i{font-style:normal;margin-left:8px;opacity:.7;cursor:pointer;padding:0 2px}
+.cal{padding:4px 2px}.calh{display:flex;align-items:center;justify-content:space-between;margin:2px 0 10px}.calh b{font-size:17px}.calh button{border:0;background:var(--bg);width:38px;height:38px;border-radius:12px;font-size:16px;color:var(--ink);cursor:pointer}.calh button:disabled{opacity:.3}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cg .wd{text-align:center;font-size:11px;color:var(--sub);padding:4px 0}.cd{position:relative;aspect-ratio:1/1.05;border:0;border-radius:12px;background:var(--bg);font:inherit;font-size:13px;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;cursor:pointer}
+.cd b{font-size:10px;font-weight:700;color:#fff;background:var(--blue);border-radius:8px;padding:1px 6px;line-height:1.3}.cd.est b{background:none;color:var(--blue);border:1px dashed var(--blue);padding:0 5px}.cd.sel{outline:2px solid var(--blue)}.cd.today span{font-weight:800;color:var(--blue)}
+.dh{font-size:13px;font-weight:700;margin:14px 20px 4px}.pill.est{background:#fff0d6;color:#b26b00}
+.dr{display:flex;justify-content:space-between;padding:7px 2px;border-bottom:1px solid var(--line);font-size:14px}.dr span{color:var(--sub)}.dr:last-child{border-bottom:0}
+.alchips label.addt{position:relative;overflow:hidden;cursor:pointer}.alchips label.addt input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.bell{border:0;background:none;font-size:19px;padding:6px 2px;opacity:.4;cursor:pointer;flex:none}.bell.on{opacity:1}
+@media(min-width:960px){.alp-wrap{margin-left:24px;margin-right:24px}}
+#intro{display:none}.native #intro{display:flex;position:fixed;inset:0;z-index:9999;background:#fff;align-items:center;justify-content:center;transition:opacity .35s ease}.native #intro.out{opacity:0;pointer-events:none}#intro img{width:min(30vw,150px);height:auto}
+@font-face{font-family:'Pretendard';src:url(fonts/PretendardVariable.woff2) format('woff2-variations'),url(fonts/PretendardVariable.woff2) format('woff2');font-weight:45 920;font-style:normal;font-display:block}
+:root{--bg:#f2f4f6;--card:#fff;--ink:#191f28;--ink2:#4e5968;--sub:#8b95a1;--line:#f2f4f6;--blue:#3182f6;--bluebg:#e8f3ff;--up:#f04452;--dn:#3182f6;--ok:#03b26c}
+@media(prefers-color-scheme:dark){:root{--bg:#101012;--card:#17171c;--ink:#f2f4f6;--ink2:#c3c9d1;--sub:#7e8590;--line:#2a2a31;--blue:#4593fc;--bluebg:#16253b;--up:#f66570;--dn:#4593fc}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Pretendard,-apple-system,"Malgun Gothic",sans-serif;letter-spacing:-.02em}
+#app{max-width:520px;margin:0 auto;min-height:100vh;padding:0 0 calc(76px + env(safe-area-inset-bottom))}
+.hd{padding:22px 20px 8px}
+a.post{display:block;padding:16px 20px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}a.post:last-child{border-bottom:0}a.post:active{background:var(--bg)}
+.post .pm{font-size:12px;color:var(--sub);margin-bottom:4px}.post .pt2{font-weight:600;font-size:16px;line-height:1.4}.post .ps{font-size:13px;color:var(--ink2);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post .pk{margin-left:auto;float:right;font-size:11px;color:var(--sub)}
+.art h1{font-size:22px;line-height:1.35;margin:6px 0 12px}.art h3{font-size:17px;margin:20px 0 6px}.art p{margin:10px 0;line-height:1.75;color:var(--ink2)}.art ul{padding-left:20px;color:var(--ink2);line-height:1.75}.art a:not(.lk){color:var(--blue)}
+.pager{display:flex;justify-content:center;gap:6px;margin:6px 16px 14px}.pager button{min-width:38px;height:38px;border:0;border-radius:10px;background:var(--card);color:var(--ink2);font:inherit;font-size:14px;cursor:pointer}.pager button.on{background:var(--ink);color:var(--card);font-weight:700}.pager button:disabled{opacity:.35;cursor:default}
+.tabs button{position:relative}.tabs button.dot::after{content:'';position:absolute;top:6px;left:calc(50% + 10px);width:8px;height:8px;border-radius:50%;background:var(--up)}
+.nativeOnly{display:none}.native .nativeOnly{display:inline}
+.native .hd{padding-top:calc(22px + max(env(safe-area-inset-top),var(--safe-area-inset-top,0px)))}
+#toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);background:#191f28e6;color:#fff;padding:11px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:60;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%)}
+.hd h1{font-size:22px;font-weight:700;margin:0}
+.hd p{margin:0;color:var(--sub);font-size:13px}
+.hd .ht{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap}
+.fxp{display:inline-block;margin-top:10px;background:var(--card);border-radius:99px;padding:5px 12px;font-size:12px;color:var(--ink2)}
+.sec{background:var(--card);border-radius:20px;margin:12px 16px;padding:20px}
+.sec.flat{padding:8px 0}
+.sec h2{font-size:17px;font-weight:700;margin:0 0 4px}
+.sec .sub{font-size:13px;color:var(--sub);margin:0 0 14px}
+.row{display:flex;align-items:center;gap:12px;padding:13px 20px;cursor:pointer}
+.row:active{background:var(--bg)}
+.av{width:40px;height:40px;border-radius:50%;background:var(--bluebg);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex:none}
+.row .m{flex:1;min-width:0}.row .t{font-weight:600}.row .n{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .r{text-align:right}.row .p{font-weight:600}.row .c{font-size:12px}
+.rk{width:18px;color:var(--blue);font-weight:700;flex:none}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 8px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:0;background:var(--card);color:var(--ink2);border-radius:99px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--card);font-weight:600}
+.seg{display:flex;background:var(--bg);border-radius:12px;padding:3px;margin:0 0 14px}
+.seg button{flex:1;border:0;background:none;padding:8px 0;border-radius:10px;font:inherit;font-size:14px;color:var(--sub);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 3px #0001}
+.search{margin:4px 16px 8px;display:block;width:calc(100% - 32px);border:0;background:var(--card);border-radius:14px;padding:14px 16px;font:inherit;color:var(--ink)}
+.search:focus,.in:focus{outline:2px solid var(--blue)}
+.in{width:100%;border:0;background:var(--bg);border-radius:12px;padding:13px 14px;font:inherit;font-size:16px;color:var(--ink)}
+label{display:block;font-size:13px;color:var(--sub);margin:12px 0 6px}
+.big{font-size:28px;font-weight:700;letter-spacing:-.03em}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-radius:14px;overflow:hidden;margin:14px 0}
+.kv div{background:var(--card);padding:12px 4px}
+.kv span{display:block;font-size:12px;color:var(--sub)}.kv b{font-weight:600}
+.pill{display:inline-block;font-size:11px;font-weight:600;background:var(--bluebg);color:var(--blue);padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:1px}
+.mos{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:8px}
+.mos i{font-style:normal;text-align:center;font-size:10px;padding:4px 0;border-radius:6px;background:var(--bg);color:var(--sub)}
+.mos i.on{background:var(--blue);color:#fff;font-weight:700}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.cmp>div{background:var(--bg);border-radius:14px;padding:12px}
+.cmp h4{margin:0 0 6px;font-size:12px;color:var(--sub);font-weight:500}
+.cmp .nm{font-weight:600;font-size:13px;margin-bottom:8px;min-height:38px}
+.ln{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}.ln span{color:var(--sub)}
+.win b{color:var(--ok)}
+.note{font-size:12px;color:var(--sub);line-height:1.6;margin-top:12px}
+.warn{margin:12px 16px;background:#fff4e0;color:#8a5200;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.55}
+@media(prefers-color-scheme:dark){.warn{background:#2c2415;color:#f0c981}}
+.res{background:var(--bluebg);border-radius:16px;padding:16px;margin-top:16px}
+.res .ln{font-size:14px;padding:4px 0}.res .ln span{color:var(--ink2)}
+.res .tot{border-top:1px solid #3182f633;margin-top:8px;padding-top:10px}
+.tb{width:100%;border-collapse:collapse;font-size:13px}.tb th,.tb td{padding:10px 6px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}.tb th{color:var(--sub);font-weight:500;width:26%}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:10}
+.tabs div{display:flex;width:100%;max-width:520px}
+.tabs button{flex:1;border:0;background:none;padding:9px 0 10px;font:inherit;font-size:11px;color:var(--sub);cursor:pointer}
+.tabs button b{display:block;font-size:20px;line-height:1.3;filter:grayscale(1);opacity:.55}
+.tabs button.on{color:var(--ink);font-weight:600}.tabs button.on b{filter:none;opacity:1}
+.sheet{position:fixed;inset:0;background:#0007;display:none;align-items:flex-end;justify-content:center;z-index:30}
+.sheet.on{display:flex}
+.sb{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:90vh;overflow:auto;padding:12px 20px calc(24px + env(safe-area-inset-bottom));animation:up .22s ease}
+@keyframes up{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 14px}
+.close{width:100%;border:0;background:var(--blue);color:#fff;border-radius:14px;padding:15px;font:inherit;font-weight:600;margin-top:16px;cursor:pointer}
+ul.l{margin:0;padding-left:18px;font-size:14px;color:var(--ink2)}ul.l li{margin:4px 0}
+a.lk{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--bg);border-radius:14px;padding:13px 14px;margin:8px 0;color:var(--ink);text-decoration:none;font-size:14px}a.lk span{color:var(--blue);font-size:13px;white-space:nowrap}.n2{font-size:12px;color:var(--sub);font-weight:400}
+.won{position:relative}.won .in{padding-right:40px;font-size:18px;font-weight:600;text-align:right}.won span{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-weight:600;color:var(--sub)}
+.hint{text-align:right;font-size:12px;color:var(--blue);min-height:18px;margin:4px 4px 0}.qk{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.qk button{border:0;background:var(--bg);color:var(--ink2);border-radius:99px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer}
+
+.tabs .brand{display:none}
+.split,.g2{display:block}
+@media(min-width:960px){
+  #app{max-width:1160px;padding:76px 0 40px}
+  .tabs{top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line)}
+  .tabs div{max-width:1160px;padding:0 24px;align-items:center;gap:4px}
+  .tabs .brand{display:block;font-weight:800;font-size:18px;margin-right:auto;color:var(--blue);padding:12px 0}
+  .brand small{display:block;font-weight:400;font-size:11px;color:var(--sub);margin-top:-2px}
+  .tabs button{flex:none;display:flex;align-items:center;gap:6px;padding:10px 16px;font-size:14px;border-radius:10px}
+  .tabs button b{display:inline;font-size:16px}
+  .tabs button:hover{background:var(--bg)}
+  .hd{padding:28px 24px 12px}.hd h1{font-size:26px}
+  .sec,.warn{margin-left:24px;margin-right:24px}
+  .seg,.chips,.search{margin-left:24px!important;margin-right:24px!important}
+  .search{width:calc(100% - 48px)}
+  .seg{max-width:380px}
+  .perchips{display:none}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:0 4px}
+  .g2>.sec{margin-left:12px;margin-right:12px}
+  .split{display:grid;grid-template-columns:400px 1fr;align-items:start;gap:0}
+  .split .pcL{position:sticky;top:84px}
+  .split .pcL .seg,.split .pcL .chips{margin-left:16px!important;margin-right:16px!important}
+  .split .pcL .sec,.split .pcL .warn{margin-left:24px;margin-right:12px}
+  .split>#dres,.split>.pcR{min-width:0}
+  .split #dres .sec,.split .pcR .sec{margin-left:12px}
+  .pt{width:100%;border-collapse:collapse;font-size:14px}
+  .pt th{position:sticky;top:60px;background:var(--card);color:var(--sub);font-weight:500;font-size:13px;padding:12px 10px;text-align:right;cursor:pointer;border-bottom:1px solid var(--line);white-space:nowrap;user-select:none}
+  .pt th.l{text-align:left}.pt th:hover{color:var(--ink)}
+  .pt td{padding:12px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  .pt td.l{text-align:left;white-space:normal;min-width:260px}
+  .pt tr[data-t]{cursor:pointer}.pt tr[data-t]:hover td{background:var(--bg)}
+  .pt .tn{font-weight:600}.pt .n{font-size:12px;color:var(--sub)}
+  .pcw{padding:0 8px 8px;overflow:visible}
+  .sheet{align-items:center}.sb{border-radius:24px;max-width:600px;max-height:88vh}.grab{display:none}
+  footer{max-width:1160px;margin:0 auto;padding:12px 24px}
+  .qk button:hover,.chip:hover{filter:brightness(.97)}
+}
+@media(min-width:700px) and (max-width:959px){
+  #app{max-width:860px}
+  .tabs div{max-width:860px}
+  .tabs button{padding:11px 0 12px;font-size:12px}.tabs button b{font-size:22px}
+  .hd{padding:26px 24px 10px}.hd h1{font-size:24px}
+  .sec,.warn{margin-left:20px;margin-right:20px}
+  .seg,.chips,.search{margin-left:20px!important;margin-right:20px!important}
+  .search{width:calc(100% - 40px)}
+  .seg{max-width:420px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:0 4px}
+  .g2>.sec{margin-left:12px;margin-right:12px}
+  #alist .sec.flat{display:grid;grid-template-columns:1fr 1fr;column-gap:12px;padding:8px 12px}
+  #alist .sec.flat>:not(.row){grid-column:1/-1}
+  #dres .sec.flat .row{padding-left:20px;padding-right:20px}
+  .sheet{align-items:center}.sb{border-radius:24px;max-width:600px;max-height:88vh}.grab{display:none}
+  footer{max-width:860px;margin:0 auto}
+}
+.tb2{display:contents}
+@media(min-width:700px){
+  .hd{display:grid;grid-template-columns:1fr auto;column-gap:16px;align-items:end}
+  .hd .ht{grid-column:1}.hd .fxp{grid-column:2;grid-row:1;align-self:end;margin:0}
+  .tb2{display:flex;gap:12px;align-items:center;margin:0 20px 10px}
+  .tb2 .seg,.tb2 .search{margin:0!important}
+  .tb2 .seg{flex:none;width:250px;max-width:none}
+  .tb2 .search{flex:1;width:auto!important;min-width:0}
+}
+@media(min-width:960px){.tb2{margin:0 24px 10px}.tb2 .seg{width:270px}}
+footer{padding:12px 24px;color:var(--sub);font-size:12px;line-height:1.65}
+svg{display:block}
+</style>
+</head>
+<body>
+<div id="intro"><img src="intro-logo.png" alt=""></div>
+<div id="app"><div id="view"></div>
+<footer>본 서비스의 정보는 투자 권유가 아니며 투자 판단과 결과의 책임은 본인에게 있어요. 시세는 지연·오류가 있을 수 있고, 보수·세금 정보는 참고용이니 운용사 공시와 국세청·증권사 안내로 꼭 확인하세요. 수익률은 배당 재투자 기준 총수익률이에요.<br><a href="privacy.html" target="_blank" rel="noopener" style="color:var(--sub)">개인정보처리방침</a><span class="nativeOnly"> · <a href="#" id="pushLink" style="color:var(--sub)">알림 설정</a></span> · 데이터 출처: Yahoo Finance, 네이버 증권(링크)</footer></div>
+<div class="tabs"><div id="tabs"></div></div>
+<div class="sheet" id="sheet"><div class="sb"><div class="grab"></div><div id="sbody"></div><button class="close" onclick="closeS()">닫기</button></div></div>
+<script>
+const TABS=[['all','📈','종목'],['rank','🏆','랭킹'],['div','💰','배당'],['cmp','⚖️','국내비교'],['tax','🧮','세금'],['blog','📝','블로그']];
+let D,tab='all',mk='us',lim=60,sortK='',sortD=-1,cat='전체',q='',per='1y',curr='KRW',dper='1y';
+const calc={amt:10000000,yrs:5,rate:8,fee:0.25,pair:'VOO'},dv={amt:10000000,style:'stable'};
+const $=s=>document.querySelector(s);
+const isPC=()=>matchMedia('(min-width:960px)').matches;
+window.addEventListener('resize',(()=>{let w=isPC();return()=>{if(w!==isPC()){w=isPC();if(D)render()}}})());
+const f1=(v,d=2)=>v==null?'-':(v>0?'+':'')+v.toFixed(d)+'%';
+const cls=v=>v==null?'':v>0?'up':v<0?'dn':'';
+const R=(e,p)=>e.isKr?e.ret[p]:e.ret[p+(curr==='KRW'?'W':'')];
+const ALL=()=>[...D.etfs,...(D.kr||[])];
+const find=t=>ALL().find(x=>x.t===t);
+
+// ---- 배당 달력 · 배당 내역 (배당락일: 실제 = 지난 2년 기록, 예상 = 작년 같은 시기) ----
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const nextYear=d=>(+d.slice(0,4)+1)+d.slice(4);
+const cal={m:'',f:'',d:''};
+let _dvEv=null,_dvFor=null;
+function divEvents(){
+  if(_dvFor===D&&_dvEv)return _dvEv;
+  const m={},last=D.asOf||'',lim=(+last.slice(0,4)-1)+last.slice(4);
+  ALL().forEach(e=>(e.divs||[]).forEach(([d,v])=>{
+    (m[d]=m[d]||[]).push({e,v,est:false});
+    if(d>lim){const n=nextYear(d);if(n>last)(m[n]=m[n]||[]).push({e,v,est:true})}
+  }));
+  _dvFor=D;return(_dvEv=m);
+}
+const dvMoney=(e,v)=>e.isKr?won(v):'$'+v;
+function vCal(){
+  if(!ALL().some(e=>e.divs))return '<div class="sec"><p class="sub">배당 일정 데이터를 준비 중이에요. 잠시 후 다시 확인해 주세요.</p></div>';
+  const today=ymd(new Date());
+  if(!cal.m)cal.m=today.slice(0,7);
+  if(!cal.f)cal.f=favs().length?'fav':'us';
+  const ev=divEvents(),[Y,M]=cal.m.split('-').map(Number),first=new Date(Y,M-1,1).getDay(),days=new Date(Y,M,0).getDate();
+  const A=(D.asOf||today),ai=+A.slice(0,4)*12+ +A.slice(5,7)-1,ci=Y*12+M-1;
+  const fv=favs(),ok=x=>cal.f==='all'||(cal.f==='fav'?fv.includes(x.e.t):cal.f==='us'?!x.e.isKr:!!x.e.isKr);
+  const at=id=>(ev[id]||[]).filter(ok);
+  let cells=['일','월','화','수','목','금','토'].map(w=>`<div class="wd">${w}</div>`).join('');
+  for(let i=0;i<first;i++)cells+='<i></i>';
+  for(let n=1;n<=days;n++){
+    const id=cal.m+'-'+pad(n),L=at(id),est=L.length>0&&L.every(x=>x.est);
+    cells+=`<button class="cd${est?' est':''}${cal.d===id?' sel':''}${id===today?' today':''}" data-cd="${id}"><span>${n}</span>${L.length?`<b>${L.length}</b>`:''}</button>`;
+  }
+  const ids=cal.d&&cal.d.startsWith(cal.m)?[cal.d]:[...Array(days)].map((_,i)=>cal.m+'-'+pad(i+1));
+  let total=0;
+  const list=ids.map(id=>{
+    const L=at(id).sort((a,b)=>(b.e.yld||0)-(a.e.yld||0));if(!L.length)return '';total+=L.length;
+    return `<div class="dh">${+id.slice(5,7)}월 ${+id.slice(8)}일${id===today?' · 오늘':''}</div>`+L.slice(0,80).map(x=>`<div class="row" data-t="${x.e.t}" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="min-width:0"><b>${x.e.isKr?x.e.n:x.e.t}</b> <span class="pill${x.est?' est':''}">${x.est?'예상':'실제'}</span><div class="n" style="font-size:12px;color:var(--sub)">${x.e.isKr?x.e.t:x.e.n}</div></div><b>${dvMoney(x.e,x.v)}</b></div></div>`).join('');
+  }).join('');
+  const chip=(k,l)=>`<button class="chip ${cal.f===k?'on':''}" data-cf="${k}">${l}</button>`;
+  return `<div class="chips" style="margin-bottom:6px">${chip('fav','★ 관심'+(fv.length?' '+fv.length:''))}${chip('us','🇺🇸 미국')}${chip('kr','🇰🇷 국내')}${chip('all','전체')}</div>
+  <div class="sec"><div class="cal"><div class="calh"><button data-cm="-1" aria-label="이전 달"${ci<=ai-23?' disabled':''}>‹</button><b>${Y}년 ${M}월</b><button data-cm="1" aria-label="다음 달"${ci>=ai+11?' disabled':''}>›</button></div><div class="cg">${cells}</div>
+  <p class="note" style="margin:10px 0 0">숫자는 그날 배당락인 종목 수예요. 실선은 지난 실제 기록, 점선은 <b>작년 같은 시기 기준 예상</b>이라 실제와 며칠 다를 수 있어요. 배당락일 전 거래일까지 보유해야 배당을 받아요.</p></div></div>
+  <div class="sec flat"><h2 style="padding:12px 20px 0">${cal.d&&cal.d.startsWith(cal.m)?`${+cal.d.slice(5,7)}월 ${+cal.d.slice(8)}일 배당락`:`${M}월 배당락 일정`}${total?` · ${total}건`:''}</h2>${list||`<p class="sub" style="padding:14px 20px">${cal.f==='fav'&&!fv.length?'관심 종목(★)을 담으면 여기에 배당락 일정이 모여요.':'이 달에는 배당락 일정이 없어요.'}</p>`}</div>`;
+}
+function divBlock(e){
+  const dl=e.divs||[];if(!dl.length)return '';
+  const last=D.asOf||'',y=+last.slice(0,4),cut=(y-1)+last.slice(4),cut2=(y-2)+last.slice(4);
+  const sum=a=>a.reduce((s,x)=>s+x[1],0),cur=sum(dl.filter(x=>x[0]>cut)),prv=sum(dl.filter(x=>x[0]>cut2&&x[0]<=cut));
+  const nx=dl.filter(x=>x[0]>cut).map(x=>nextYear(x[0])).filter(n=>n>last).sort()[0];
+  const kv=(l,v)=>`<div><span>${l}</span><b>${v}</b></div>`;
+  return `<h3 style="font-size:15px;margin:16px 0 6px">💰 배당 내역</h3>
+  <div class="kv">${kv('최근 1년 합계(주당)',dvMoney(e,+cur.toFixed(e.isKr?0:2)))}${kv('전년 대비',prv>0?f1((cur/prv-1)*100,1):'-')}${kv('다음 배당락(예상)',nx?nx.slice(2):'-')}${kv('지급 횟수(1년)',dl.filter(x=>x[0]>cut).length+'회')}</div>
+  <div style="margin-top:6px">${dl.slice(-6).reverse().map(x=>`<div class="dr"><span>${x[0]} 배당락</span><b>${dvMoney(e,x[1])}</b></div>`).join('')}</div>
+  <div class="note">다음 배당락은 작년 같은 시기를 기준으로 한 예상이에요. 실제 일정은 운용사 공시를 확인하세요.</div>`;
+}
+// ★ 관심 종목: 이 기기에만 저장(회원가입·서버 없음)
+const FAV='★ 관심';
+function favs(){try{const a=JSON.parse(localStorage.getItem('etf.fav')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
+function isFav(t){return favs().includes(t)}
+function favBtn(t){const on=isFav(t);return `<button class="fav${on?' on':''}" data-fav="${t}" aria-label="관심 종목">${on?'★':'☆'}</button>`}
+function toggleFav(t){
+  const a=favs(),i=a.indexOf(t);if(i>=0)a.splice(i,1);else a.unshift(t);
+  try{localStorage.setItem('etf.fav',JSON.stringify(a))}catch(e){}
+  const on=i<0;document.querySelectorAll('[data-fav]').forEach(b=>{if(b.dataset.fav===t){b.classList.toggle('on',on);b.textContent=on?'★':'☆'}});
+  toast(on?'관심 종목에 담았어요':'관심 종목에서 뺐어요');
+  if(NATIVE&&typeof syncAlerts==='function')syncAlerts();
+  if(on&&a.length===1)setTimeout(()=>{if(typeof maybeAskAlerts==='function')maybeAskAlerts()},600);
+  if(tab==='all'&&cat===FAV)render();   // 관심 목록을 보는 중이면 바로 갱신
+}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-fav]');if(b){e.stopPropagation();e.preventDefault();toggleFav(b.dataset.fav)}},true);
+const taxK=e=>e.isKr?0.846:0.85;
+const won=n=>Math.round(n).toLocaleString()+'원';
+const man=n=>{const a=Math.abs(n),s=n<0?'-':'';return a>=10000?s+(a/10000).toFixed(a>=1e5?0:1).replace(/\.0$/,'')+'억원':s+Math.round(a).toLocaleString()+'만원'};
+const pl={'1w':'1주','1m':'1개월','3m':'3개월','6m':'6개월','ytd':'올해','1y':'1년'};
+const NATIVE=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+const PL=(window.Capacitor&&window.Capacitor.Plugins)||{};
+const SITE='https://etf.imeji.com';
+// 앱 인트로: 데이터·글꼴이 준비돼 첫 화면이 완성된 뒤에 걷는다(최소 1.1초, 최대 5초)
+const T0=Date.now();let splashDone=false;console.log('[splash] page script start');
+function hideSplash(){
+  if(!NATIVE||splashDone)return;splashDone=true;
+  console.log('[splash] hide after '+(Date.now()-T0)+'ms of page start');
+  const el=document.getElementById('intro');if(el){el.classList.add('out');setTimeout(()=>el.remove(),450)}
+  try{const sp=PL.SplashScreen;if(sp&&sp.hide)sp.hide({fadeOutDuration:0}).catch(()=>{})}catch(e){}
+}
+function splashWhenReady(){
+  // 화면에 쓰는 굵기를 미리 불러 와서 글꼴이 바뀌어 보이는 현상을 막는다
+  const f=document.fonts;
+  const load=f&&f.load?Promise.all(['400','500','600','700','800'].map(w=>f.load(w+' 16px Pretendard','가나다ETF0123').catch(()=>0))):Promise.resolve();
+  const guard=new Promise(r=>setTimeout(r,2500));
+  Promise.race([load,guard]).then(()=>setTimeout(hideSplash,Math.max(0,1100-(Date.now()-T0))));
+}
+if(NATIVE)setTimeout(hideSplash,5000);
+// 모든 외부 링크(네이버·블로그·방침 등)는 앱 안이 아니라 기기 브라우저로 보낸다
+function openExternal(u){
+  if(NATIVE){ window.open(u,'_system'); } else { window.open(u,'_blank','noopener'); }
+}
+if(NATIVE)document.documentElement.classList.add('native');
+// 앱: 서버의 최신 data.json → 실패하면 마지막으로 받아 둔 값 → 앱에 담긴 값 순서
+function loadData(){
+  const bundled=()=>fetch('data.json').then(r=>r.json());
+  if(!NATIVE)return bundled();
+  const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),8000);
+  return fetch(SITE+'/data.json?'+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()})
+    .then(d=>{clearTimeout(t);if(!d||!d.etfs||!d.kr)throw 0;try{localStorage.setItem('etf.cache',JSON.stringify(d))}catch(e){}return d})
+    .catch(()=>{clearTimeout(t);try{const c=localStorage.getItem('etf.cache');if(c){const d=JSON.parse(c);if(d&&d.etfs)return d}}catch(e){}return bundled()});
+}
+loadPosts().then(d=>{POSTS=d;if(D){updateBlogDot();if(tab==='blog')render()}});
+loadData().then(d=>{D=d;
+  $('#tabs').innerHTML='<div class="brand">ETF 검색기<small>미국·국내 ETF 한눈에</small></div>'+TABS.map(([k,i,l])=>`<button data-k="${k}"><b>${i}</b>${l}</button>`).join('');
+  $('#tabs').onclick=e=>{const b=e.target.closest('button[data-k]');if(b){tab=b.dataset.k;scrollTo(0,0);render()}};
+  render();splashWhenReady();flushLink();});
+const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const okUrl=u=>/^https?:\/\//i.test(u||'');
+let POSTS=null;
+// 글 목록: 서버의 최신 posts.json → 마지막으로 받아 둔 값 → 앱에 담긴 값 (앱 업데이트 없이 목록만 바꿀 수 있다)
+function loadPosts(){
+  const bundled=()=>fetch('posts.json').then(r=>r.json());
+  const live=NATIVE?SITE+'/posts.json?'+Date.now():'posts.json?'+Date.now();
+  const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),8000);
+  return fetch(live,{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()})
+    .then(d=>{clearTimeout(t);if(!d||!Array.isArray(d.posts))throw 0;try{localStorage.setItem('etf.posts',JSON.stringify(d))}catch(e){}return d})
+    .catch(()=>{clearTimeout(t);try{const c=localStorage.getItem('etf.posts');if(c){const d=JSON.parse(c);if(d&&Array.isArray(d.posts))return d}}catch(e){}return bundled().catch(()=>({posts:[]}))});
+}
+const postKey=()=>{const p=(POSTS&&POSTS.posts&&POSTS.posts.filter(postOk)[0]);return p?pid(p):''};
+function markPostsSeen(){try{localStorage.setItem('etf.postsSeen',postKey())}catch(e){}}
+function hasNewPost(){const k=postKey();if(!k)return false;try{return localStorage.getItem('etf.postsSeen')!==k}catch(e){return false}}
+function updateBlogDot(){const b=document.querySelector('#tabs [data-k=blog]');if(b)b.classList.toggle('dot',tab!=='blog'&&hasNewPost())}
+let bq='',bpage=1,bcat='전체';const BPER=10;
+const pid=x=>String(x.id||x.url||x.link||x.title);
+const postOk=x=>x&&x.title&&(okUrl(x.url)||/^app:/.test(x.link||'')||(x.body&&String(x.body).trim()));
+function blogAll(){return((POSTS&&POSTS.posts)||[]).filter(postOk)}
+// 글 종류: 앱 안 글(body) / 앱 화면 이동(link=app:...) / 외부 링크(url)
+function postKind(x){return(x.body&&String(x.body).trim())?'article':/^app:/.test(x.link||'')?'go':'ext'}
+function postRow(x){
+  const k=postKind(x),inner=`<div class="pm">${x.tag?`<span class="pill" style="margin:0 6px 0 0">${esc(x.tag)}</span>`:''}<span>${esc(x.date||'')}</span>${k==='ext'?'':`<span class="pk">${k==='go'?'앱 이동':'앱 안'}</span>`}</div><div class="pt2">${esc(x.title)}</div>${x.summary?`<div class="ps">${esc(x.summary)}</div>`:''}`;
+  if(k==='ext')return `<a class="post" href="${esc(x.url)}" target="_blank" rel="noopener"${x.open==='system'?' data-sys="1"':''}>${inner}</a>`;
+  return `<a class="post" href="#" data-pk="${k}" data-pid="${esc(pid(x))}">${inner}</a>`;
+}
+// 글 본문(앱 안 글): 빈 줄=문단, "## "=소제목, "- "=목록, **굵게**, [글자](https주소)
+function md(t){
+  const inl=v=>esc(v).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  let out='',para=[],ul=false;const fp=()=>{if(para.length){out+='<p>'+para.map(inl).join('<br>')+'</p>';para=[]}},fu=()=>{if(ul){out+='</ul>';ul=false}};
+  String(t||'').split(/\r?\n/).forEach(l=>{
+    if(/^\s*$/.test(l)){fp();fu();return}
+    if(/^##\s+/.test(l)){fp();fu();out+='<h3>'+inl(l.replace(/^##\s+/,''))+'</h3>';return}
+    if(/^-\s+/.test(l)){fp();if(!ul){out+='<ul>';ul=true}out+='<li>'+inl(l.replace(/^-\s+/,''))+'</li>';return}
+    fu();para.push(l)});
+  fp();fu();return out;
+}
+let bopen='';
+function vArticle(x){
+  return `<div class="hd" style="padding-bottom:0"><button class="chip" data-bback style="margin-bottom:10px">‹ 목록</button></div>
+  <div class="sec art"><div class="pm" style="font-size:12px;color:var(--sub)">${x.tag?`<span class="pill" style="margin:0 6px 0 0">${esc(x.tag)}</span>`:''}${esc(x.date||'')}</div><h1>${esc(x.title)}</h1>${md(x.body)}${okUrl(x.url)?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener"><div><b>블로그에서 보기</b></div><span>열기 ›</span></a>`:''}</div>
+  <div class="note" style="padding:0 24px">투자 권유가 아니에요. 참고용 정보입니다.</div>`;
+}
+// 앱 화면 이동: app:tab/tax · app:etf/TQQQ · app:kr/069500
+let pendingLink=null;
+function runLink(l){
+  if(!l||typeof l!=='string')return;
+  if(/^app:/.test(l)){if(typeof D!=='undefined'&&D&&document.querySelector('#view').children.length)goApp(l);else pendingLink=l}
+  else if(okUrl(l))openExternal(l);
+}
+function flushLink(){if(pendingLink){const l=pendingLink;pendingLink=null;setTimeout(()=>goApp(l),400)}}
+function goApp(link){
+  const m=/^app:(tab|etf|kr)\/(.+)$/.exec(link||'');if(!m)return;
+  if(m[1]==='tab'){if(TABS.some(t=>t[0]===m[2])){bopen='';tab=m[2];render();scrollTo(0,0)}return}
+  if(find(m[2]))openS(m[2]);else toast('종목을 찾을 수 없어요');
+}
+function blogList(){
+  const k=bq.trim().toLowerCase();
+  const L=blogAll().filter(x=>(bcat==='전체'||(x.tag||'기타')===bcat)&&(!k||((x.title||'')+' '+(x.summary||'')+' '+(x.tag||'')).toLowerCase().includes(k)));
+  const pages=Math.max(1,Math.ceil(L.length/BPER));if(bpage>pages)bpage=pages;
+  const cur=L.slice((bpage-1)*BPER,bpage*BPER);
+  if(!blogAll().length)return `<div class="sec"><p class="sub" style="margin:0">${POSTS?'아직 올라온 글이 없어요. 곧 만나요!':'글 목록을 불러오는 중이에요…'}</p></div>`;
+  if(!L.length)return `<div class="sec"><p class="sub" style="margin:0">'${esc(bq)}' 검색 결과가 없어요</p></div>`;
+  let nums=[];const st=Math.max(1,Math.min(bpage-2,pages-4)),en=Math.min(pages,st+4);for(let i=st;i<=en;i++)nums.push(i);
+  const pager=pages>1?`<div class="pager"><button data-bp="${bpage-1}" ${bpage<=1?'disabled':''}>‹</button>${nums.map(i=>`<button data-bp="${i}" class="${i===bpage?'on':''}">${i}</button>`).join('')}<button data-bp="${bpage+1}" ${bpage>=pages?'disabled':''}>›</button></div>`:'';
+  return `<div class="note" style="padding:0 24px 6px;margin:0">${k?`'${esc(bq)}' 검색 결과 `:'전체 '}${L.length}개${pages>1?` · ${bpage}/${pages}쪽`:''}</div>`+
+  `<div class="sec flat">${cur.map(postRow).join('')}</div>`+pager;
+}
+function blogCats(){
+  const cnt={};blogAll().forEach(x=>{const t=x.tag||'기타';cnt[t]=(cnt[t]||0)+1});
+  const names=Object.keys(cnt);if(names.length<2&&bcat==='전체')return '';
+  if(bcat!=='전체'&&!cnt[bcat])bcat='전체';
+  return `<div class="chips" id="bcats">${['전체',...names].map(c=>`<button class="chip ${c===bcat?'on':''}" data-bc="${esc(c)}">${esc(c)}${c==='전체'?'':` ${cnt[c]}`}</button>`).join('')}</div>`;
+}
+function bindBlog(){
+  const bb=document.querySelector('[data-bback]');if(bb)bb.onclick=()=>{bopen='';render();scrollTo(0,0)};
+  const bc=$('#bcatsWrap');if(bc&&!bc._b){bc._b=1;bc.addEventListener('click',e=>{const b=e.target.closest('[data-bc]');if(!b)return;bcat=b.dataset.bc;bpage=1;bc.innerHTML=blogCats();$('#blist').innerHTML=blogList()})}
+  const q=$('#bq');if(q&&!q._b){q._b=1;q.oninput=e=>{bq=e.target.value;bpage=1;$('#blist').innerHTML=blogList()}}
+  const l=$('#blist');if(l&&!l._b){l._b=1;l.addEventListener('click',e=>{
+    const pk=e.target.closest('[data-pk]');if(pk){e.preventDefault();const x=blogAll().find(p=>pid(p)===pk.dataset.pid);if(!x)return;if(pk.dataset.pk==='go')goApp(x.link);else{bopen=pid(x);render();scrollTo(0,0)}return}const b=e.target.closest('[data-bp]');if(!b||b.disabled)return;bpage=+b.dataset.bp;l.innerHTML=blogList();const y=l.getBoundingClientRect().top+scrollY-70;scrollTo(0,Math.max(0,y))})}
+}
+function vBlog(){
+  if(bopen){const x=blogAll().find(p=>pid(p)===bopen);if(x)return vArticle(x);bopen=''}
+  return head('블로그','ETF 투자 이야기')+`<input class="search" id="bq" type="search" placeholder="글 제목·태그 검색" value="${esc(bq)}">`+`<div id="bcatsWrap">${blogCats()}</div><div id="blist">${blogList()}</div><div class="note" style="padding:0 24px">글을 누르면 블로그로 이동해요. 블로그 글은 투자 권유가 아니에요.</div>`;
+}
+function head(t,s){return `<div class="hd"><button class="optbtn" data-opt aria-label="설정">⚙️</button><div class="ht"><h1>${t}</h1><p>${s}</p></div><span class="fxp">달러 환율 ${D.usdkrw.toLocaleString()}원 · ${D.asOf} 기준</span></div>`}
+// 가로로 넘치는 칩 줄에 '더 있어요' 표시(가장자리 흐림 + 화살표 버튼)
+function decorateChips(){
+  document.querySelectorAll('#view .chips').forEach(c=>{
+    if(c.parentNode.classList&&c.parentNode.classList.contains('cw'))return;
+    const w=document.createElement('div');w.className='cw';c.parentNode.insertBefore(w,c);w.appendChild(c);
+    const l=document.createElement('div');l.className='cf l';l.innerHTML='<i>‹</i>';
+    const r=document.createElement('div');r.className='cf r';r.innerHTML='<i>›</i>';
+    w.appendChild(l);w.appendChild(r);
+    const upd=()=>{l.classList.toggle('on',c.scrollLeft>6);r.classList.toggle('on',c.scrollLeft+c.clientWidth<c.scrollWidth-6)};
+    c.addEventListener('scroll',upd,{passive:true});
+    l.firstChild.onclick=()=>c.scrollBy({left:-c.clientWidth*0.6,behavior:'smooth'});
+    r.firstChild.onclick=()=>c.scrollBy({left:c.clientWidth*0.6,behavior:'smooth'});
+    c._upd=upd;requestAnimationFrame(upd);
+  });
+}
+let lastRK='';
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===tab));
+  // 같은 화면에서 칩을 눌러 다시 그릴 때는 가로 스크롤(칩 줄)과 세로 위치를 그대로 유지한다
+  const rk=[tab,mk,dv.view,bopen].join('|'),same=rk===lastRK;
+  const sl=same?[...document.querySelectorAll('#view .chips')].map(c=>c.scrollLeft):[];
+  const sy=same?window.scrollY:0;
+  $('#view').innerHTML={all:vAll,rank:vRank,div:vDiv,cmp:vCmp,tax:vTax,blog:vBlog}[tab]();if(tab==='blog'){markPostsSeen();bindBlog()}bind();updateBlogDot();decorateChips();
+  lastRK=rk;
+  const rows=[...document.querySelectorAll('#view .chips')];
+  rows.forEach((c,i)=>{
+    if(same&&sl[i]!=null)c.scrollLeft=sl[i];
+    // 선택된 칩이 가려져 있으면 보이는 곳까지만 옮긴다
+    const on=c.querySelector('.chip.on');if(on){const l=on.offsetLeft-c.offsetLeft,r=l+on.offsetWidth;if(l<c.scrollLeft+60)c.scrollLeft=l-64;else if(r>c.scrollLeft+c.clientWidth-60)c.scrollLeft=r-c.clientWidth+64}
+  });
+  if(same)window.scrollTo(0,sy);
+  rows.forEach(c=>{if(c._upd)c._upd()});
+}
+function bind(){
+  const s=$('#q');if(s){s.oninput=e=>{q=e.target.value;lim=60;$('#alist').innerHTML=allList();bindList()};bindList()}
+  document.querySelectorAll('[data-mk]').forEach(c=>c.onclick=()=>{mk=c.dataset.mk;cat='전체';q='';lim=60;render()});
+  document.querySelectorAll('[data-cat]').forEach(c=>c.onclick=()=>{cat=c.dataset.cat;lim=60;render()});
+  document.querySelectorAll('[data-t]').forEach(c=>c.onclick=()=>openS(c.dataset.t));
+  document.querySelectorAll('[data-per]').forEach(c=>c.onclick=()=>{per=c.dataset.per;render()});
+  document.querySelectorAll('[data-cur]').forEach(c=>c.onclick=()=>{curr=c.dataset.cur;render()});
+  const setAmt=(id,n)=>{const [o,k]=id.split('.');(o==='calc'?calc:dv)[k]=n;
+    const i=document.querySelector(`[data-won="${id}"]`);if(i)i.value=fmt(n);
+    const h=document.querySelector(`[data-hint="${id}"]`);if(h)h.textContent=hint(n);
+    const r=$(o==='calc'?'#cres':'#dres');if(r){r.innerHTML=o==='calc'?calcRes():(dv.view==='list'?divList():divRes());r.querySelectorAll('[data-t]').forEach(x=>x.onclick=()=>openS(x.dataset.t))}};
+  document.querySelectorAll('[data-won]').forEach(c=>c.oninput=e=>{const n=Math.min(+(e.target.value.replace(/\D/g,'')||0),1e13);setAmt(c.dataset.won,n)});
+  document.querySelectorAll('[data-add]').forEach(c=>c.onclick=()=>{const [id,q]=c.dataset.add.split(':'),[o,k]=id.split('.'),cur=(o==='calc'?calc:dv)[k];setAmt(id,+q?cur+ +q:0)});
+  document.querySelectorAll('[data-view]').forEach(c=>c.onclick=()=>{dv.view=c.dataset.view;render()});
+  document.querySelectorAll('[data-cm]').forEach(c=>c.onclick=()=>{const [y,m]=cal.m.split('-').map(Number),d=new Date(y,m-1+ +c.dataset.cm,1);cal.m=d.getFullYear()+'-'+pad(d.getMonth()+1);cal.d='';render()});
+  document.querySelectorAll('[data-cf]').forEach(c=>c.onclick=()=>{cal.f=c.dataset.cf;render()});
+  document.querySelectorAll('[data-cd]').forEach(c=>c.onclick=()=>{cal.d=cal.d===c.dataset.cd?'':c.dataset.cd;render()});
+  document.querySelectorAll('[data-style]').forEach(c=>c.onclick=()=>{dv.style=c.dataset.style;render()});
+  document.querySelectorAll('[data-in]').forEach(c=>c.oninput=e=>{const k=c.dataset.in.split('.')[1];calc[k]=+e.target.value;const r=$('#cres');if(r)r.innerHTML=calcRes()});
+  document.querySelectorAll('[data-pair]').forEach(c=>c.onchange=e=>{calc.pair=e.target.value;render()});
+}
+const curSeg=()=>`<div class="seg" style="margin:0 16px 8px"><button data-cur="KRW" class="${curr==='KRW'?'on':''}">원화 환산</button><button data-cur="USD" class="${curr==='USD'?'on':''}">달러 기준</button></div>`;
+const price=e=>e.isKr?won(e.price):curr==='KRW'?won(e.krw):'$'+e.price.toFixed(2);
+function row(e,pp,rank){
+  const v=R(e,pp);
+  return `<div class="row" data-t="${e.t}">${rank?`<span class="rk">${rank}</span>`:''}<div class="av" ${e.isKr?'style="font-size:9px"':''}>${e.isKr?e.brand:e.t.slice(0,4)}</div><div class="m"><div class="t">${e.isKr?e.n:e.t}${e.krEq?'<span class="pill">국내대응</span>':''}</div><div class="n">${e.isKr?e.t+' · '+e.c:e.n}</div></div><div class="r"><div class="p">${price(e)}</div><div class="c ${cls(v)}">${pl[pp]} ${f1(v)}</div></div>${(cat===FAV&&tab==='all'&&NATIVE)?bellBtn(e.t):''}${favBtn(e.t)}</div>`;
+}
+const COLS=[['name','종목','l'],['price','현재가'],['chg','전일'],['1m','1개월'],['3m','3개월'],['ytd','올해'],['1y','1년'],['yld','배당률'],['er','총보수'],['mdd1y','1년 낙폭']];
+function sval(e,k){if(k==='name')return e.isKr?e.n:e.t;if(k==='price')return e.isKr?e.price:(curr==='KRW'?e.krw:e.price);if(['1m','3m','ytd','1y'].includes(k))return R(e,k)??-9999;if(k==='er')return e.er??9999;return e[k]??-9999}
+function tbl(L){
+  if(sortK)L=[...L].sort((a,b)=>{const x=sval(a,sortK),y=sval(b,sortK);return(typeof x==='string'?x.localeCompare(y,'ko'):x-y)*sortD});
+  const pc=v=>`<td class="${cls(v)}">${f1(v)}</td>`;
+  return `<table class="pt"><thead><tr>${COLS.map(([k,l,c])=>`<th class="${c||''}" data-sort="${k}">${l}${sortK===k?(sortD<0?' ▼':' ▲'):''}</th>`).join('')}</tr></thead><tbody>${L.slice(0,lim).map(e=>`<tr data-t="${e.t}"><td class="l"><div class="tn">${favBtn(e.t)}${(cat===FAV&&tab==='all'&&NATIVE)?bellBtn(e.t):''}${e.isKr?e.n:e.t}${e.krEq?'<span class="pill">국내대응</span>':''}</div><div class="n">${e.isKr?e.t+' · '+e.c:e.n+' · '+e.c}</div></td><td>${price(e)}</td>${pc(e.chg)}${pc(R(e,'1m'))}${pc(R(e,'3m'))}${pc(R(e,'ytd'))}${pc(R(e,'1y'))}<td>${e.yld>0?e.yld.toFixed(2)+'%':'-'}</td><td>${e.er==null?'-':e.er.toFixed(2)+'%'}</td><td class="dn">${e.mdd1y}%</td></tr>`).join('')}</tbody></table>`;
+}
+function allList(){
+  const src=mk==='kr'?(D.kr||[]):D.etfs;
+  const k=q.trim().toLowerCase();
+  const AP='';
+  const L=(cat===FAV?ALL():src).filter(e=>(cat==='전체'||(cat===FAV?isFav(e.t):e.c===cat))&&(!k||(e.t+' '+e.n+' '+(e.i||'')).toLowerCase().includes(k)));
+  if(isPC()&&L.length)return AP+`<div class="sec flat pcw">${tbl(L)}${L.length>lim?`<div style="padding:12px 16px"><button class="close" style="background:var(--bg);color:var(--ink);margin:0" data-more>더 보기 (${L.length-lim}개 남음)</button></div>`:''}</div><div class="note" style="padding:0 24px">${src.length}종목 중 ${L.length}종목 · 컬럼 제목을 누르면 정렬돼요</div>`+(mk==='kr'?'<div class="note" style="padding:0 24px">국내 ETF의 NAV·괴리율·구성종목·총보수는 종목을 눌러 네이버 증권에서 확인하세요.</div>':'');
+  return AP+`<div class="sec flat">${L.slice(0,lim).map(e=>row(e,per)).join('')||(cat===FAV?'<p class="sub" style="padding:20px;line-height:1.7">아직 담은 종목이 없어요.<br>종목 오른쪽의 ☆를 눌러 관심 종목에 담아 보세요.</p>':'<p class="sub" style="padding:20px">검색 결과가 없어요</p>')}${L.length>lim?`<div style="padding:8px 16px 12px"><button class="close" style="background:var(--bg);color:var(--ink);margin:0" data-more>더 보기 (${L.length-lim}개 남음)</button></div>`:''}</div><div class="note" style="padding:0 24px">${src.length}종목 중 ${L.length}종목</div>`+
+  (mk==='kr'?'<div class="note" style="padding:0 24px">국내 ETF의 NAV·괴리율·구성종목·총보수는 종목을 눌러 네이버 증권에서 확인하세요.</div>':'');
+}
+function bindList(){
+  document.querySelectorAll('#alist [data-sort]').forEach(c=>c.onclick=()=>{const k=c.dataset.sort;if(sortK===k)sortD*=-1;else{sortK=k;sortD=k==='name'||k==='er'?1:-1}$('#alist').innerHTML=allList();bindList()});
+  document.querySelectorAll('#alist [data-t]').forEach(c=>c.onclick=()=>openS(c.dataset.t));
+  const mo=document.querySelector('#alist [data-more]');if(mo)mo.onclick=()=>{lim+=80;const y=scrollY;$('#alist').innerHTML=allList();bindList();scrollTo(0,y)};
+}
+function vAll(){
+  const src=mk==='kr'?(D.kr||[]):D.etfs;
+  const cs=['전체',FAV,...new Set(src.map(e=>e.c))];
+  if(!cs.includes(cat))cat='전체';
+  return head(mk==='kr'?'국내 ETF':'미국 ETF',mk==='kr'?'한국 상장 ETF를 카테고리별로 모았어요':'한국 투자자 눈높이로 정리했어요')+
+  `<div class="tb2"><div class="seg" style="margin:0 16px 8px"><button data-mk="us" class="${mk==='us'?'on':''}">🇺🇸 미국 ETF</button><button data-mk="kr" class="${mk==='kr'?'on':''}">🇰🇷 국내 ETF</button></div>`+
+  (mk==='kr'?'':curSeg())+
+  `<input class="search" id="q" type="search" placeholder="${mk==='kr'?'이름이나 종목코드로 검색':'티커나 이름으로 검색'}" value="${q}"></div>
+  <div class="chips">${cs.map(c=>`<button class="chip ${c===cat?'on':''}" data-cat="${c}">${c}</button>`).join('')}</div>
+  <div class="chips perchips">${Object.entries(pl).slice(1).map(([k,v])=>`<button class="chip ${k===per?'on':''}" data-per="${k}">${v}</button>`).join('')}</div>
+  <div id="alist">${allList()}</div>`;
+}
+function vRank(){
+  const L=D.etfs.filter(e=>R(e,per)!=null).sort((a,b)=>R(b,per)-R(a,per));
+  return head('수익률 랭킹','기간을 바꿔서 확인해 보세요')+curSeg()+
+  `<div class="chips">${Object.entries(pl).map(([k,v])=>`<button class="chip ${k===per?'on':''}" data-per="${k}">${v}</button>`).join('')}</div>
+  <div class="g2"><div class="sec flat"><h2 style="padding:12px 20px 0">많이 오른 ETF</h2>${L.slice(0,10).map((e,i)=>row(e,per,i+1)).join('')}</div>
+  <div class="sec flat"><h2 style="padding:12px 20px 0">많이 내린 ETF</h2>${L.slice(-10).reverse().map((e,i)=>row(e,per,i+1)).join('')}</div></div>
+  <div class="warn">같은 ETF도 원화 환산과 달러 기준 수익률이 달라요. 환율이 오르면 원화 수익이 더 커져요.</div>`;
+}
+const fmt=n=>(n||0).toLocaleString('ko-KR');
+const hint=n=>n>=1e4?'= '+man(n/1e4):'';
+function wonInput(id,v,quick){return `<div class="won"><input class="in" type="text" inputmode="numeric" autocomplete="off" data-won="${id}" value="${fmt(v)}"><span>원</span></div><div class="hint" data-hint="${id}">${hint(v)}</div>
+<div class="qk">${quick.map(q=>`<button data-add="${id}:${q}">+${man(q/1e4)}</button>`).join('')}<button data-add="${id}:0">초기화</button></div>`}
+const STYLES={
+ stable:{l:'안정성',d:'변동이 작은 배당·채권 위주',w:{SCHD:30,VIG:20,USMV:15,BND:20,SGOV:15}},
+ balance:{l:'균형',d:'배당성장 + 일부 고배당',w:{SCHD:30,VYM:20,JEPI:20,VIG:15,BND:15}},
+ income:{l:'월배당 극대화',d:'커버드콜 위주, 현금흐름 중시',w:{SPYI:25,QQQI:25,JEPI:20,JEPQ:15,SCHD:15}},
+ kincome:{l:'🇰🇷 국내 월배당',d:'국내 상장 커버드콜·프리미엄 월배당 위주(배당소득세 15.4%)',w:{'458760':30,'441640':25,'441680':20,'472150':15,'458730':10}},
+ kstable:{l:'🇰🇷 국내 안정',d:'국내 상장 배당·채권 위주(배당소득세 15.4%)',w:{'458730':35,'211560':20,'161510':15,'453850':30}},
+ growth:{l:'배당성장',d:'배당이 해마다 늘어나는 종목',w:{SCHD:30,VIG:30,DGRO:25,VOO:15}}
+};
+function portfolio(){
+  const st=STYLES[dv.style]||STYLES.stable,A=dv.amt||0;
+  const items=Object.entries(st.w).map(([t,w])=>{const e=find(t);return e&&{e,w,amt:A*w/100,net:A*w/100*e.yld/100*taxK(e)}}).filter(Boolean);
+  const tw=items.reduce((s,x)=>s+x.w,0)||1;
+  const net=items.reduce((s,x)=>s+x.net,0);
+  const yld=items.reduce((s,x)=>s+x.e.yld*x.w,0)/tw;
+  const mdd=items.reduce((s,x)=>s+x.e.mdd1y*x.w,0)/tw;
+  const mon=Array(12).fill(0);
+  items.forEach(x=>{const m=x.e.divMonths;if(m.length)m.forEach(k=>mon[k-1]+=x.net/m.length)});
+  const mx=Math.max(...mon,1),paid=mon.filter(v=>v>0).length;
+  return {st,items,net,yld,mdd,mon,mx,paid,A};
+}
+function divRes(){
+  const P=portfolio();
+  return `<div class="sec"><div style="font-size:13px;color:var(--sub)">${P.st.l} 구성 · 세후 연 예상 배당</div>
+  <div class="big">${won(P.net)}</div>
+  <div style="font-size:13px;color:var(--sub)">월 평균 ${won(P.net/12)} · 포트폴리오 배당률 ${P.yld.toFixed(2)}%</div>
+  <div class="kv"><div><span>1년 최대낙폭(가중평균)</span><b class="dn">${P.mdd.toFixed(1)}%</b></div><div><span>배당 받는 달</span><b>${P.paid}개월 / 12</b></div></div>
+  <div style="font-size:13px;font-weight:600;margin:4px 0 6px">월별 예상 수령액(세후)</div>
+  <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;height:90px">${P.mon.map(v=>`<div style="background:${v>0?'var(--blue)':'var(--bg)'};height:${v>0?Math.max(8,v/P.mx*100):6}%;border-radius:4px"></div>`).join('')}</div>
+  <div class="mos" style="margin-top:4px">${[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>`<i>${m}</i>`).join('')}</div>
+  <p class="note">지급월은 최근 1년 패턴으로 나눈 추정치예요. 지급 시기와 금액은 달라질 수 있어요.</p></div>
+  <div class="sec flat"><h2 style="padding:12px 20px 0">구성 종목</h2>${P.items.map(x=>`<div class="row" data-t="${x.e.t}"><div class="av">${x.w}%</div><div class="m"><div class="t">${x.e.isKr?x.e.n:x.e.t} <span class="pill">${x.e.freq}배당</span></div><div class="n">${x.e.isKr?'🇰🇷 '+x.e.t:x.e.n}</div></div><div class="r"><div class="p">${won(x.amt)}</div><div class="c" style="color:var(--ok)">연 ${won(x.net)}</div></div></div>`).join('')}</div>`;
+}
+function divList(){
+  const L=ALL().filter(e=>e.yld>0).sort((a,b)=>b.yld-a.yld),m=[1,2,3,4,5,6,7,8,9,10,11,12],A=dv.amt||0;
+  return `<div class="sec flat"><h2 style="padding:12px 20px 0">배당 ETF ${L.length}종목</h2><p class="sub" style="padding:0 20px;margin:2px 0 6px">배당률 높은 순 · 연 금액은 이 ETF에 <b>투자금 전액</b>을 넣었을 때(세후, 미국 15%·국내 15.4%)예요</p>
+  ${L.map(e=>`<div class="row" data-t="${e.t}" style="display:block"><div style="display:flex;justify-content:space-between"><div><b>${e.isKr?e.n:e.t}</b> <span class="pill">${e.freq}배당</span>${e.isKr?'<span class="pill" style="background:#fff0d6;color:#b26b00">국내</span>':''}${e.yld>30?'<span class="pill" style="background:#ffe9ea;color:#f04452">원금 하락 주의</span>':''}<div class="n" style="font-size:12px;color:var(--sub)">${e.isKr?e.t:e.n}</div></div><div style="text-align:right"><b>${e.yld.toFixed(2)}%</b><div style="font-size:12px;color:var(--ok)">연 ${won(A*e.yld/100*taxK(e))}</div></div></div><div class="mos">${m.map(x=>`<i class="${e.divMonths.includes(x)?'on':''}">${x}</i>`).join('')}</div></div>`).join('')}</div>`;
+}
+const dvSeg=()=>`<div class="seg" style="margin:0 16px 8px"><button data-view="pf" class="${dv.view!=='list'&&dv.view!=='cal'?'on':''}">포트폴리오</button><button data-view="cal" class="${dv.view==='cal'?'on':''}">배당 달력</button><button data-view="list" class="${dv.view==='list'?'on':''}">전체 목록</button></div>`;
+function vDiv(){
+  if(dv.view==='cal')return head('배당 달력','배당락일을 달력으로 확인해요')+dvSeg()+vCal();
+  const pf=dv.view!=='list';
+  return head('배당 포트폴리오','투자금과 성향만 고르면 자동으로 나눠드려요')+
+  (pf?'<div class="split"><div class="pcL">':'')+`<div class="sec"><h2>투자금</h2><p class="sub">직접 입력하거나 아래 버튼으로 더해 보세요</p>
+  ${wonInput('dv.amt',dv.amt,[100000,1000000,10000000])}</div>
+  ${dvSeg()}
+  ${pf?`<div class="chips" id="stchips">${Object.entries(STYLES).map(([k,v])=>`<button class="chip ${k===dv.style?'on':''}" data-style="${k}">${v.l}</button>`).join('')}</div>
+  <div class="warn" style="margin-top:4px">${STYLES[dv.style].d}. 조건별 <b>예시 구성(참고용)</b>이며 투자 권유가 아니에요. 비중은 직접 바꿔서 판단하세요.</div>
+  </div><div id="dres">${divRes()}</div></div>`:`<div id="dres">${divList()}</div>`}`;
+}
+function vCmp(){
+  const L=D.etfs.filter(e=>e.krEq);
+  return head('국내상장 vs 미국상장','같은 지수, 뭐가 더 나을까?')+
+  `<div class="warn">두 ETF는 같은 지수를 따라도 세금·계좌·환전·환헤지가 달라요. 연금저축·IRP·ISA에서는 국내 상장 ETF만 살 수 있어요. 기준일이 이틀 정도 다를 수 있어요.</div>`+
+  '<div class="g2">'+L.map(e=>{const k=e.krEq,a=e.ret['1yW'],b=k.ret['1y'];
+   return `<div class="sec"><div style="font-weight:600">${e.t} <span style="color:var(--sub);font-weight:400">vs</span> ${k.n}</div>
+   <div class="cmp"><div><h4>🇺🇸 미국 상장</h4><div class="nm">${e.t}</div>
+    <div class="ln ${k.ter!=null&&e.er<k.ter?'win':''}"><span>총보수</span><b>${e.er.toFixed(2)}%</b></div>
+    <div class="ln ${a>b?'win':''}"><span>1년(원화)</span><b>${f1(a)}</b></div>
+    <div class="ln"><span>배당률</span><b>${e.yld}%</b></div></div>
+   <div><h4>🇰🇷 국내 상장</h4><div class="nm">${k.n}</div>
+    <div class="ln ${k.ter!=null&&k.ter<e.er?'win':''}"><span>총보수</span><b>${k.ter==null?'-':k.ter.toFixed(2)+'%'}</b></div>
+    <div class="ln ${b>a?'win':''}"><span>1년</span><b>${f1(b)}</b></div>
+    <div class="ln"><span>배당률</span><b>${k.yld}%</b></div></div></div>${(e.krEqs||[]).length>1?`<div class="note">다른 국내 대응: ${e.krEqs.slice(1).map(x=>`<a href="https://m.stock.naver.com/domestic/stock/${x.code}/total" target="_blank" rel="noopener" style="color:var(--blue)">${x.n}(1년 ${f1(x.ret['1y'])})</a>`).join(' · ')}</div>`:''}</div>`}).join('')+'</div>'+
+  `<div class="sec"><h2>어떤 걸 고를까?</h2><ul class="l"><li>연금저축·IRP·ISA → <b>국내 상장</b>만 가능해요</li><li>일반 계좌에서 오래 들고 큰 수익을 노린다면 → 직투(양도세 22%, 연 250만원 공제)가 유리할 수 있어요</li><li>금융소득 연 2천만원 초과 → 국내 상장이 불리할 수 있어요</li><li>환전이 번거롭다면 → 국내 상장이 편해요</li></ul><p class="note">정확한 비교는 '세금' 탭의 계산기로 해보세요.</p></div>`;
+}
+function calcRes(){
+  const pairs=D.etfs.filter(e=>e.krEq);
+  const e=pairs.find(x=>x.t===calc.pair)||pairs[0];
+  const P=calc.amt||0,Y=Math.max(calc.yrs||1,.1),r=(calc.rate||0)/100;
+  const gain=P*(Math.pow(1+r,Y)-1);
+  // 미국 직투: 환전(편도 fee%) 매수·매도, 보수, 양도세 22%(250만원 공제)
+  const feeUS=P*calc.fee/100*2, erUS=P*(e.er/100)*Y, grossUS=gain-feeUS-erUS;
+  const taxUS=Math.max(0,grossUS-2500000)*0.22;
+  const feeKR=0, erKR=P*((e.krEq.ter??0.1)/100)*Y, grossKR=gain-erKR;
+  const taxKR=Math.max(0,grossKR)*0.154;
+  const netUS=grossUS-taxUS,netKR=grossKR-taxKR,diff=netUS-netKR;
+  return `<div class="res">
+   <div class="ln"><span>🇺🇸 ${e.t} 세후 수익</span><b>${man(netUS/10000)}</b></div>
+   <div class="ln"><span>　세금 / 환전비 / 보수</span><span>${man(taxUS/10000)} / ${man(feeUS/10000)} / ${man(erUS/10000)}</span></div>
+   <div class="ln" style="margin-top:6px"><span>🇰🇷 국내 ETF 세후 수익</span><b>${man(netKR/10000)}</b></div>
+   <div class="ln"><span>　세금 / 보수</span><span>${man(taxKR/10000)} / ${man(erKR/10000)}</span></div>
+   <div class="ln tot"><span>${diff>=0?'미국 직투가 더 남아요':'국내 상장이 더 남아요'}</span><b class="${diff>=0?'up':'dn'}" style="font-size:18px">${man(Math.abs(diff)/10000)}</b></div></div>`;
+}
+function vTax(){
+  const pairs=D.etfs.filter(e=>e.krEq),e=pairs.find(x=>x.t===calc.pair)||pairs[0];
+  return head('세후 수익 계산기','세금 떼고 나면 얼마 남을까?')+
+  `<div class="split"><div class="pcL"><div class="sec"><h2>미국 직투 vs 국내 상장</h2><p class="sub">일반 계좌, 만기 시 한 번에 매도한다고 가정해요</p>
+  <label>비교할 ETF</label><select class="in" data-pair>${pairs.map(x=>`<option value="${x.t}" ${x.t===e.t?'selected':''}>${x.t} ↔ ${x.krEq.n}</option>`).join('')}</select>
+  <label>투자금</label>${wonInput('calc.amt',calc.amt,[1000000,10000000,100000000])}
+  <label>투자 기간 (년)</label><input class="in" type="number" inputmode="decimal" data-in="calc.yrs" value="${calc.yrs}">
+  <label>예상 연 수익률 (%, 보수 전)</label><input class="in" type="number" inputmode="decimal" data-in="calc.rate" value="${calc.rate}">
+  <label>환전 수수료 (편도 %)</label><input class="in" type="number" inputmode="decimal" step="0.05" data-in="calc.fee" value="${calc.fee}">
+  <div id="cres">${calcRes()}</div>
+  <div class="warn" style="margin:12px 0 0">⚠️ <b>금융소득종합과세는 반영하지 않았어요.</b> 수익이 크면 국내 상장 쪽 세금이 위 계산보다 늘어날 수 있어요. 아래 <b>종합과세 안내</b>를 꼭 확인하세요.</div>
+  <p class="note">단순 가정이에요. 미국: 양도세 22%(250만원 공제), 환전 매수·매도 각 ${calc.fee}% · 국내: 배당소득세 15.4%(차익 전체에 적용, 실제는 과표증분과 비교해 낮은 금액) · 금융소득종합과세, 배당, 환율 변동은 반영하지 않았어요. 참고용이며 세무 판단은 전문가에게 확인하세요.</p></div></div>
+  <div class="pcR"><div class="sec"><h2>세금 한눈에</h2><table class="tb"><tr><th>미국 직투</th><td>매매차익 양도세 22%, 연 250만원 공제, 다음 해 5월 직접 신고 · 배당 15% 원천징수</td></tr>
+  <tr><th>국내 상장 해외ETF</th><td>배당소득세 15.4%, 자동 원천징수 · 손익 통산 불가 · 금융소득종합과세 대상</td></tr></table></div>
+  <div class="sec"><h2>계좌별 투자 가능 여부</h2><table class="tb"><tr><th>일반</th><td>미국·국내 모두 가능</td></tr><tr><th>연금저축</th><td>국내 상장만 · 세액공제·과세이연</td></tr><tr><th>IRP</th><td>국내 상장만 · 위험자산 비중 제한</td></tr><tr><th>ISA</th><td>국내 상장만 · 비과세+분리과세</td></tr></table><p class="note">공제 한도·세율 같은 세부 수치는 매년 바뀌니 가입 전 증권사 안내를 확인하세요.</p></div>
+  <div class="sec" id="jonghap"><h2>💡 금융소득종합과세 안내</h2>
+  <ul class="l">
+  <li><b>기준</b>: 이자·배당 등 금융소득이 <b>연 2천만원</b>을 넘으면, 초과분은 근로·사업소득 등과 합산해 <b>누진세율</b>로 종합과세돼요.</li>
+  <li><b>미국 상장 ETF</b>: 분배금(배당)만 금융소득에 들어가요. 매매차익은 양도소득세(분류과세)라 합산되지 않아요.</li>
+  <li><b>국내 상장 해외 ETF</b>: 분배금뿐 아니라 매매차익(배당소득세가 붙는 부분)도 금융소득에 들어가요. 수익이 큰 해에는 2천만원을 쉽게 넘길 수 있어요.</li>
+  <li>그래서 <b>금융소득이 많은 투자자는 국내 상장 ETF의 실제 세금이 계산기 결과보다 커질 수 있어요.</b></li>
+  <li>금융소득이 많으면 <b>건강보험료</b>(피부양자 자격, 지역가입자 보험료)에도 영향이 있을 수 있어요.</li>
+  <li>미국에서 먼저 뗀 배당세 15%는 종합과세 때 외국납부세액공제로 정산할 수 있어요.</li>
+  </ul>
+  <p class="note">계산기는 일반 계좌, 단순 가정 기준이에요. 세율·공제·기준 금액은 해마다 바뀔 수 있어서 구체적인 세액은 국세청 홈택스나 세무사에게 확인하세요.</p></div></div></div>`;
+}
+function spark(a,w=320,h=90){
+  const mn=Math.min(...a),mx=Math.max(...a),sx=w/(a.length-1),sy=v=>h-6-(v-mn)/(mx-mn||1)*(h-12);
+  const p=a.map((v,i)=>`${i?'L':'M'}${(i*sx).toFixed(1)},${sy(v).toFixed(1)}`).join('');
+  const c=a[a.length-1]>=a[0]?'var(--up)':'var(--dn)';
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none"><path d="${p}" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function openK(e){
+  const kv=(l,v)=>`<div><span>${l}</span><b>${v}</b></div>`;
+  const us=D.etfs.filter(x=>(x.kr||[]).includes(e.t));
+  $('#sbody').innerHTML=`<div style="color:var(--sub);font-size:13px">🇰🇷 국내 상장 · ${e.c} · ${e.t}</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-size:20px;font-weight:700">${e.n}</div>${favBtn(e.t)}</div>
+  <div class="big" style="margin-top:8px">${won(e.price)}</div>
+  <div style="color:var(--sub);font-size:13px">전일 <span class="${cls(e.chg)}">${f1(e.chg)}</span> · ${e.date}</div>
+  <div style="margin:12px 0">${spark(e.spark)}</div>
+  <div class="seg">${['1m','3m','ytd','1y'].map(p=>`<button style="pointer-events:none"><div style="font-size:11px">${pl[p]}</div><div class="${cls(e.ret[p])}" style="font-weight:600">${f1(e.ret[p],1)}</div></button>`).join('')}</div>
+  <div class="kv">${kv('배당률',e.yld>0?e.yld.toFixed(2)+'% ('+e.freq+')':'-')}${kv('1년 최대낙폭',e.mdd1y+'%')}${kv('52주 최고',won(e.hi52))}${kv('52주 최저',won(e.lo52))}</div>
+  ${e.divMonths.length?`<div style="font-size:12px;color:var(--sub)">분배금 지급월</div><div class="mos">${[1,2,3,4,5,6,7,8,9,10,11,12].map(x=>`<i class="${e.divMonths.includes(x)?'on':''}">${x}</i>`).join('')}</div>`:''}
+  ${divBlock(e)}<h3 style="font-size:15px;margin:16px 0 6px">🇰🇷 한국 투자자 체크</h3>
+  <ul class="l"><li>일반 계좌: 매매차익·분배금에 배당소득세 15.4%(자동 원천징수), 금융소득종합과세 대상</li><li>연금저축·IRP·ISA에서 살 수 있어요(일부 상품은 제한될 수 있어요)</li>
+  ${e.yld>30?'<li style="color:var(--up)">배당률이 매우 높아요. 가격 하락을 함께 확인하세요</li>':''}${e.c==='레버리지·인버스'?'<li style="color:var(--up)">고위험 상품이에요. 장기 보유 시 기대와 다른 손실이 날 수 있어요</li>':''}</ul>
+  ${us.length?`<h3 style="font-size:15px;margin:16px 0 6px">같은 지수의 미국 ETF</h3>${us.map(x=>`<div class="lk" onclick="openS('${x.t}')" style="cursor:pointer"><div><b>${x.t}</b><div class="n2">${x.n} · 총보수 ${x.er.toFixed(2)}%</div></div><span>보기 ›</span></div>`).join('')}`:''}
+  <a class="lk" href="https://m.stock.naver.com/domestic/stock/${e.t}/total" target="_blank" rel="noopener"><div><b>네이버 증권에서 보기</b><div class="n2">NAV·괴리율·구성종목·총보수</div></div><span>열기 ›</span></a>`;
+  $('#sheet').classList.add('on');document.body.style.overflow='hidden';
+}
+function openS(t){
+  const e=find(t);if(e.isKr)return openK(e);
+  const kv=(l,v)=>`<div><span>${l}</span><b>${v}</b></div>`;
+  $('#sbody').innerHTML=`<div style="color:var(--sub);font-size:13px">${e.c} · ${e.i}</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-size:20px;font-weight:700">${e.n} <span style="color:var(--sub);font-weight:500;font-size:15px">${e.t}</span></div>${favBtn(e.t)}</div>
+  <div class="big" style="margin-top:8px">${won(e.krw)}</div>
+  <div style="color:var(--sub);font-size:13px">$${e.price.toFixed(2)} · 전일 <span class="${cls(e.chg)}">${f1(e.chg)}</span></div>
+  <div style="margin:12px 0">${spark(e.spark)}</div>
+  <div class="seg">${['1m','3m','ytd','1y'].map(p=>`<button style="pointer-events:none"><div style="font-size:11px">${pl[p]}</div><div class="${cls(e.ret[p+'W'])}" style="font-weight:600">${f1(e.ret[p+'W'],1)}</div></button>`).join('')}</div>
+  <div style="font-size:12px;color:var(--sub);margin:-6px 0 0">원화 환산 수익률 · 달러 기준 1년 ${f1(e.ret['1y'])}</div>
+  <div class="kv">${kv('총보수',e.er.toFixed(2)+'%')}${kv('배당률',e.yld.toFixed(2)+'% ('+e.freq+')')}${kv('52주 최고','$'+e.hi52)}${kv('1년 최대낙폭',e.mdd1y+'%')}</div>
+  ${divBlock(e)}<h3 style="font-size:15px;margin:16px 0 6px">🇰🇷 한국 투자자 체크</h3>
+  <ul class="l"><li>직투 시 매매차익 양도세 22%(연 250만원 공제), 배당 15% 원천징수</li><li>연금저축·IRP·ISA에서는 직접 살 수 없어요</li>
+  ${e.c==='레버리지·인버스'?'<li style="color:var(--up)">고위험 상품이에요. 장기 보유 시 복리 효과로 기대와 다른 손실이 날 수 있어요</li>':''}
+  ${e.yld>30?'<li style="color:var(--up)">배당률 30% 이상은 가격 하락을 감수한 결과예요. 1년 수익률(가격+배당)과 최대낙폭을 꼭 함께 보세요</li>':e.freq==='월'&&e.yld>6?'<li>배당률이 높아도 가격(NAV)이 줄 수 있어요</li>':''}</ul>
+  ${(e.krEqs||[]).length?`<h3 style="font-size:15px;margin:16px 0 6px">국내 상장 대응 ETF</h3>`+e.krEqs.map(k=>`<a class="lk" href="https://m.stock.naver.com/domestic/stock/${k.code}/total" target="_blank" rel="noopener"><div><b>${k.n}</b><div class="n2">${k.code} · 보수 ${k.ter==null?'공시 확인':k.ter.toFixed(2)+'%'} · 1년 ${f1(k.ret['1y'])}</div></div><span>네이버 증권 ›</span></a>`).join(''):''}
+  <a class="lk" href="https://search.naver.com/search.naver?query=${encodeURIComponent(e.t+' ETF')}" target="_blank" rel="noopener"><div><b>${e.t} 상세 시세·구성종목</b><div class="n2">네이버에서 검색</div></div><span>열기 ›</span></a>
+  <div class="note">NAV·괴리율·구성종목·총보수 확정치는 네이버 증권과 운용사 공시에서 확인하세요.</div>`;
+  $('#sheet').classList.add('on');document.body.style.overflow='hidden';
+}
+function closeS(){$('#sheet').classList.remove('on');document.body.style.overflow=''}
+$('#sheet').onclick=e=>{if(e.target.id==='sheet')closeS()};
+// ---- 앱 전용 ----
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('a[target=_blank]');if(!a||!NATIVE)return;
+  e.preventDefault();let u=a.href;if(u.startsWith(location.origin))u=SITE+u.slice(location.origin.length);
+  openExternal(u);
+});
+// ---- 관심 종목 알림: 폰이 직접 계산 (앱에서만, 서버·푸시 서비스 없음) ----
+const AL=()=>PL.Alerts||null;
+const DEF_ALERT={on:false,th:5,times:['08:30','17:00'],off:[],divOn:false,divDays:3};
+function alertCfg(){try{const c=JSON.parse(localStorage.getItem('etf.alerts')||'null');return Object.assign({},DEF_ALERT,c||{})}catch(e){return Object.assign({},DEF_ALERT)}}
+function alertTargets(c){c=c||alertCfg();return favs().filter(t=>!c.off.includes(t))}
+function syncAlerts(){const a=AL();if(!a)return;const c=alertCfg();a.setConfig({enabled:!!c.on,th:c.th,times:c.times,favs:alertTargets(c),divOn:!!c.divOn,divDays:c.divDays}).catch(()=>{})}
+function saveAlertCfg(c){try{localStorage.setItem('etf.alerts',JSON.stringify(c))}catch(e){}syncAlerts();refreshAlertUI()}
+async function setAlertsOn(on,key){
+  key=key||'on';const c=alertCfg();
+  if(on){
+    const a=AL();if(!a){toast('앱에서만 설정할 수 있어요');return}
+    const r=await a.requestNotify().catch(()=>({granted:false}));
+    if(!r||!r.granted){toast('기기 설정에서 알림을 허용해 주세요');return}
+    c[key]=true;saveAlertCfg(c);toast(key==='on'?'알림을 켰어요':'배당락 알림을 켰어요');
+  }else{c[key]=false;saveAlertCfg(c);toast(key==='on'?'알림을 껐어요':'배당락 알림을 껐어요')}
+}
+function bellBtn(t){const m=alertCfg().off.includes(t);return `<button class="bell${m?'':' on'}" data-al="bell" data-t="${t}" aria-label="이 종목 알림">${m?'🔕':'🔔'}</button>`}
+function alertPanel(){
+  const c=alertCfg(),n=alertTargets(c).length;
+  if(!NATIVE)return `<div class="alp"><div class="alh"><div><b>🔔 관심 종목 알림</b><div class="sub2">앱에서 정한 시각에 관심 종목이 크게 움직이거나 배당락일이 다가오면 알려드려요</div></div></div></div>`;
+  const times=c.times.map(t=>`<span class="chip on tm">${t}<i data-al="deltime" data-v="${t}">×</i></span>`).join('');
+  const thin=`<span class="chip thin${[3,5,10].includes(c.th)?'':' on'}">직접 ±<input type="number" inputmode="decimal" step="0.5" min="0.5" max="50" value="${c.th}" data-al="thin" aria-label="알림 기준 퍼센트">%</span>`;
+  return `<div class="alp"><div class="alh"><div><b>🔔 관심 종목 알림</b><div class="sub2">${c.on?`정한 시각에 폰이 확인해서 하루 ±${c.th}% 이상 움직인 종목을 알려드려요 (알림 켠 종목 ${n}개)`:'꺼져 있어요 · 켜면 정한 시각에 폰이 직접 확인해요'}</div></div><span class="sw${c.on?' on':''}" data-al="toggle"></span></div>`+
+  (c.on?`<div class="alopt"><div class="all">알림 기준 (하루 등락률)</div><div class="alchips">${[3,5,10].map(v=>`<button class="chip${c.th===v?' on':''}" data-al="th" data-v="${v}">±${v}%</button>`).join('')}${thin}</div></div>`:'')+
+  `<div class="alh" style="margin-top:14px"><div><b>📅 배당락 알림</b><div class="sub2">${c.divOn?`관심 종목의 배당락일 ${c.divDays}일 전에 알려드려요 (작년 같은 시기 기준 예상)`:'꺼져 있어요 · 켜면 관심 종목의 배당락일이 다가올 때 알려드려요'}</div></div><span class="sw${c.divOn?' on':''}" data-al="divtoggle"></span></div>`+
+  (c.divOn?`<div class="alopt"><div class="all">며칠 전에 알려드릴까요?</div><div class="alchips">${[1,2,3,5,7].map(v=>`<button class="chip${c.divDays===v?' on':''}" data-al="divd" data-v="${v}">${v}일 전</button>`).join('')}</div></div>`:'')+
+  (c.on||c.divOn?`<div class="alopt"><div class="all">받을 시간 (최대 3개)</div><div class="alchips">${times}${c.times.length<3?'<button class="chip addt" data-al="addbtn">+ 시간 추가</button><input type="time" data-al="addtime" value="" class="tpick" tabindex="-1">':''}</div>
+  <div class="all" style="line-height:1.6">종목별로 끄려면 ★ 관심 목록의 🔔를 누르세요. 설정한 시각에 가까운 때 확인하며, 기기 절전 상태에 따라 몇 분 늦을 수 있어요.</div></div>`:'')+`</div>`;
+}
+function refreshAlertUI(){document.querySelectorAll('.alp-wrap').forEach(w=>{w.innerHTML=alertPanel()})}
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('[data-al]');if(!b||b.tagName==='INPUT')return;
+  const k=b.dataset.al,c=alertCfg();
+  if(k==='bell'){e.stopPropagation();const t=b.dataset.t,i=c.off.indexOf(t);if(i>=0)c.off.splice(i,1);else c.off.push(t);saveAlertCfg(c);b.classList.toggle('on',i>=0);b.textContent=i>=0?'🔔':'🔕';toast(i>=0?'이 종목 알림을 켰어요':'이 종목 알림을 껐어요');return}
+  if(k==='toggle')setAlertsOn(!c.on);
+  else if(k==='divtoggle')setAlertsOn(!c.divOn,'divOn');
+  else if(k==='divd'){c.divDays=+b.dataset.v;saveAlertCfg(c)}
+  else if(k==='addbtn'){const i=document.querySelector('.tpick');if(i){try{i.showPicker()}catch(x){i.focus();i.click()}}}
+  else if(k==='th'){c.th=+b.dataset.v;saveAlertCfg(c)}
+  else if(k==='deltime'){c.times=c.times.filter(t=>t!==b.dataset.v);if(!c.times.length)c.times=['08:30'];saveAlertCfg(c)}
+},true);
+document.addEventListener('change',e=>{
+  const i=e.target;if(i.dataset&&i.dataset.al==='thin'){let v=parseFloat(String(i.value).replace(',','.'));if(!(v>=0.5))v=5;v=Math.min(50,Math.round(v*2)/2);const c=alertCfg();c.th=v;saveAlertCfg(c);toast('기준을 ±'+v+'%로 바꿨어요');return}
+  if(!i.dataset||i.dataset.al!=='addtime'||!/^\d\d:\d\d$/.test(i.value))return;
+  const c=alertCfg();if(!c.times.includes(i.value)&&c.times.length<3)c.times.push(i.value);c.times.sort();saveAlertCfg(c);
+});
+// 첫 관심 종목을 담으면 알림을 켤지 한 번 물어본다
+function maybeAskAlerts(){
+  if(!NATIVE||!AL())return;let asked='';try{asked=localStorage.getItem('etf.alertAsked')||''}catch(e){}
+  if(asked||alertCfg().on)return;try{localStorage.setItem('etf.alertAsked','1')}catch(e){}
+  $('#sbody').innerHTML=`<div style="text-align:center;padding:8px 0 4px"><div style="font-size:40px">🔔</div><div style="font-size:19px;font-weight:700;margin:6px 0">관심 종목이 움직이면 알려드릴까요?</div><div style="color:var(--ink2);font-size:14px;line-height:1.7">내가 정한 시각에 폰이 직접 확인해서<br>하루 ±5% 이상 움직인 종목만 알려드려요.<br>시각과 기준은 ⚙ 설정에서 바꿀 수 있어요.</div><button class="close" id="alYes" style="margin-top:18px">알림 켜기</button></div>`;
+  $('#sheet').classList.add('on');document.body.style.overflow='hidden';
+  $('#alYes').onclick=()=>{closeS();setAlertsOn(true)};
+}
+if(NATIVE&&AL()){
+  const a=AL();
+  syncAlerts();
+  try{a.addListener('alertTap',ev=>runLink(ev&&ev.link))}catch(e){}
+  a.getLaunchLink().then(r=>{if(r&&r.link)runLink(r.link)}).catch(()=>{});
+  // 처음 실행하면 안드로이드 기본 알림 허용 팝업을 한 번 띄운다 (소개 화면이 끝난 뒤)
+  let asked='';try{asked=localStorage.getItem('etf.permAsked')||''}catch(e){}
+  if(!asked)setTimeout(()=>{
+    try{localStorage.setItem('etf.permAsked','1')}catch(e){}
+    a.notifyStatus().then(r=>{if(!r||!r.granted)a.requestNotify().catch(()=>{})}).catch(()=>{});
+  },2500);
+}
+if(NATIVE)document.addEventListener('click',e=>{if(e.target.id==='pushLink'){e.preventDefault();openOptions()}});
+let backAt=0;
+function toast(m){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),1800)}
+if(PL.App&&PL.App.addListener){PL.App.addListener('backButton',()=>{
+  if($('#sheet').classList.contains('on'))return closeS();
+  if(tab==='blog'&&bopen){bopen='';render();return}
+  if(tab!=='all'){tab='all';render();scrollTo(0,0);return}
+  if(Date.now()-backAt<2000){PL.App.exitApp();return}
+  backAt=Date.now();toast('한 번 더 누르면 종료돼요');
+})}
+</script>
+<script src="options.js"></script>
+</body>
+</html>
